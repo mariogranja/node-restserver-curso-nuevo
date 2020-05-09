@@ -4,7 +4,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 var bodyParser = require('body-parser');
-
+const path = require('path');
 
 
 //MiddleWares
@@ -14,10 +14,11 @@ app.use(bodyParser.json());
 //Configuracion global de rutas
 app.use(require('./routes/index'));
 
-
+//Habilitar carpeta public
+app.use(express.static( path.resolve( __dirname , '../public')));
 
 //Conexion a la base de datos
-mongoose.connect(process.env.URLDB,{
+mongoose.connect(process.env.URLDB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
