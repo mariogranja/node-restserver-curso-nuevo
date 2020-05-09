@@ -1,54 +1,32 @@
-require('./config/config')
-const express = require('express')
-const app = express()
-var bodyParser = require('body-parser')
-
-
-//variables del entorno
-
-//MiddleWars
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+//Requires necesarios para la funcionalidad correcta del server
+require('./config/config');
+const express = require('express');
+const mongoose = require('mongoose');
+const app = express();
+var bodyParser = require('body-parser');
 
 
 
-//Peticion get es para recuperar informacion
-app.get('/usuario', function (req, res) {
-    res.json('getUsuario')
-})
-
-//Peticion post es para insertar informacion
-//En el post los parametros no se visualizan en la url 
-//El req.body recibe los parametros por form-urlencoded y no por la url normal pero toca instanciar los middlewars y el bodyparser
-app.post('/usuario', function (req, res) {
-    let body = req.body;
-
-    if (body.nombre === undefined) {
-        res.status(400).json({
-            ok:false,
-            mensaje: 'El nombre es necesario'
-        })
-    } else {
-        res.json({
-            persona: body
-        })
-    }
+//MiddleWares
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(require('./routes/usuario'));
 
 
-})
-//Peticion put es para actualizar informacion
-//En el put esta recibiendo un parametro con dos puntos para poder actualizar con ese id
-app.put('/usuario/:id', function (req, res) {
-    let id = req.params.id;
-    res.json({
-        id
-    });
-})
-//Peticion delete es para borrar informacion
-app.delete('/usuario', function (req, res) {
-    res.json('deleteUsuario')
-})
 
+//Conexion a la base de datos
+mongoose.connect(process.env.URLDB,{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+}, (err, res) => {
+    if (err) throw err;
+
+    console.log(`Base de datos ONLINE`);
+});
+
+
+//Dice en que puerto escucha
 app.listen(process.env.PORT, () => {
     console.log("Escuchando puerto: ", process.env.PORT);
 })
